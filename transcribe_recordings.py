@@ -5,7 +5,7 @@ import whisper
 
 # Function to extract audio references from a markdown file
 def extract_audio_references(md_content):
-    return re.findall(r'!\[\[([^\]]+\.m4a)\]\]', md_content)
+    return re.findall(r'!\[\[([^\]]+\.(m4a|webm))\]\]', md_content)
 
 # Function to transcribe an audio file
 def transcribe_audio(file_path, model):
@@ -13,7 +13,7 @@ def transcribe_audio(file_path, model):
     result = model.transcribe(file_path)
     return result["text"]
 
-# Main function
+# Main function to process markdown files and transcribe referenced audio
 def process_markdown_files(md_dir, audio_dir, model_size="medium"):
     # Load Whisper model
     model = whisper.load_model(model_size)
@@ -41,7 +41,7 @@ def process_markdown_files(md_dir, audio_dir, model_size="medium"):
                 continue  # Skip files with no audio references
 
             transcript_text = ""
-            for audio_file in audio_files:
+            for audio_file, ext in audio_files:
                 audio_path = os.path.join(audio_dir, audio_file)
                 if os.path.exists(audio_path):
                     transcript_text += f"### Transcript for {audio_file}\n\n"
